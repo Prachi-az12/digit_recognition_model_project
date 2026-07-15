@@ -1,6 +1,6 @@
 tensorflow-cpu==2.15.0
 streamlit
 streamlit-drawable-canvas
-opencv-python
+opencv-python-headless
 numpy
 pandas

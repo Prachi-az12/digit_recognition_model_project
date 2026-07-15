@@ -8,7 +8,7 @@ import cv2
 from streamlit_drawable_canvas import st_canvas
 from tensorflow.keras.models import load_model
 
-# Load the pre-trained model
+# Load the pre-trained models
 model = load_model('digit_recognition_model.keras')
 
 st.title("Handwritten Digit Recognition")
