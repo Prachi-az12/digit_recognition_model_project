@@ -9,7 +9,11 @@ from streamlit_drawable_canvas import st_canvas
 from tensorflow.keras.models import load_model
 
 # Load the pre-trained models
-model = load_model('digit_recognition_model.keras')
+#model = load_model('digit_recognition_model.keras')
+
+model = load_model("digit_recognition_model.h5")
+  # HDF5 format
+
 
 st.title("Handwritten Digit Recognition")
 
