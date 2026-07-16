@@ -143,12 +143,6 @@ st.markdown(
         color: #FFD700;
         text-shadow: 2px 2px #000000;
     }
-    .footer {
-        text-align: center;
-        font-size: 14px;
-        margin-top: 50px;
-        color: #dcdcdc;
-    }
     </style>
     """,
     unsafe_allow_html=True
@@ -174,36 +168,32 @@ canvas_result = st_canvas(
     key="canvas",
 )
 
-col1, col2 = st.columns([1,1])
-with col1:
-    if st.button("🔄 Clear Canvas"):
-        st.experimental_rerun()
+# Predict button only
+if st.button("🔍 Predict"):
+    if canvas_result.image_data is not None:
+        with st.spinner("Analyzing your digit..."):
+            img = canvas_result.image_data.astype(np.uint8)
+            grey_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            grey_img = cv2.resize(grey_img, (28, 28))
+            grey_img = grey_img / 255.0
+            grey_img = grey_img.reshape(1, 784)
 
-with col2:
-    if st.button("🔍 Predict"):
-        if canvas_result.image_data is not None:
-            with st.spinner("Analyzing your digit..."):
-                img = canvas_result.image_data.astype(np.uint8)
-                grey_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                grey_img = cv2.resize(grey_img, (28, 28))
-                grey_img = grey_img / 255.0
-                grey_img = grey_img.reshape(1, 784)
+            result = model.predict(grey_img)
+            index = np.argmax(result)
+            confidence = np.max(result) * 100
 
-                result = model.predict(grey_img)
-                index = np.argmax(result)
-                confidence = np.max(result) * 100
+            st.success(f"✅ Predicted Digit: {index} (Confidence: {confidence:.2f}%)")
 
-                st.success(f"✅ Predicted Digit: {index} (Confidence: {confidence:.2f}%)")
+            # Probability chart
+            fig, ax = plt.subplots()
+            ax.bar(range(10), result[0], color="#FFD700")
+            ax.set_xticks(range(10))
+            ax.set_xlabel("Digits")
+            ax.set_ylabel("Probability")
+            st.pyplot(fig)
+    else:
+        st.warning("⚠️ Please draw a digit first!")
 
-                # Probability chart
-                fig, ax = plt.subplots()
-                ax.bar(range(10), result[0], color="#FFD700")
-                ax.set_xticks(range(10))
-                ax.set_xlabel("Digits")
-                ax.set_ylabel("Probability")
-                st.pyplot(fig)
-        else:
-            st.warning("⚠️ Please draw a digit first!")
 
 # Footer
 st.markdown('<div class="footer">Made with ❤️ using Streamlit & Keras</div>', unsafe_allow_html=True)
